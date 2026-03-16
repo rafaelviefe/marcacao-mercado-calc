@@ -223,7 +223,7 @@ export function CalculatorForm() {
               type="checkbox"
               id="isentoIR"
               {...register("isentoIR")}
-              className="w-4 h-4 text-calculator-red bg-white border-gray-300 rounded focus:ring-calculator-red"
+              className="w-4 h-4 accent-calculator-red cursor-pointer"
             />
             <label
               htmlFor="isentoIR"
