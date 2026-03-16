@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-sardinha-bg: #FFFFFF;
-  --color-sardinha-card: rgb(229, 231, 235);
-  --color-sardinha-text: rgb(33, 37, 41);
-  --color-sardinha-red: rgb(178, 34, 34);
+  --color-calculator-bg: #ffffff;
+  --color-calculator-card: #f8f9fa;
+  --color-calculator-text: rgb(33, 37, 41);
+  --color-calculator-red: rgb(178, 34, 34);
 }
 
 body {
-  background-color: var(--color-sardinha-bg);
-  color: var(--color-sardinha-text);
+  background-color: var(--color-calculator-bg);
+  color: var(--color-calculator-text);
 }
