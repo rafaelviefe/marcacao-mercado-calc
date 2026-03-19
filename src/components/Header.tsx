@@ -13,25 +13,28 @@ export function Header() {
 
         <div className="flex items-center gap-4 text-white/80">
           <a
-            href="#"
+            href="https://www.linkedin.com/in/rafael-vieira-ferreira/"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="LinkedIn"
             className="hover:text-white transition-colors"
           >
             <Linkedin size={20} />
           </a>
           <a
-            href="#"
+            href="https://x.com/rafaelvieiradev"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="Twitter"
             className="hover:text-white transition-colors"
           >
             <Twitter size={20} />
           </a>
           <a
-            href="#"
+            href="https://github.com/rafaelviefe/marcacao-mercado-calc"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="GitHub"
             className="hover:text-white transition-colors"
           >
             <Github size={20} />
