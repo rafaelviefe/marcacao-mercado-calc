@@ -4,7 +4,7 @@
   --color-calculator-bg: #ffffff;
   --color-calculator-card: #f8f9fa;
   --color-calculator-text: rgb(33, 37, 41);
-  --color-calculator-red: rgb(178, 34, 34);
+  --color-calculator-primary: rgb(4, 102, 76);
 }
 
 body {

@@ -2,7 +2,7 @@ import { Calculator, Github, Linkedin, Twitter } from "lucide-react";
 
 export function Header() {
   return (
-    <header className="w-full bg-calculator-red shadow-md">
+    <header className="w-full bg-calculator-primary shadow-md">
       <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-white">
           <Calculator size={28} strokeWidth={2.5} />
