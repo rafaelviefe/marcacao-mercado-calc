@@ -1,11 +1,11 @@
 import { Header } from "@/components/Header";
 import { CalculatorForm } from "@/components/CalculatorForm";
 import { EducationalSection } from "@/components/EducationalSection";
+import { ScrollToTopButton } from "@/components/ScrollToTopButton";
 
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col font-sans">
-
       <Header />
       
       <section className="flex-1 w-full max-w-5xl mx-auto px-4 pt-12 pb-4">
@@ -19,6 +19,8 @@ export default function Home() {
       <footer className="w-full bg-gray-50 py-6 text-center text-sm text-gray-500 border-t border-gray-200">
         <p>Projeto de código aberto. Desenvolvido para ajudar investidores a tomar melhores decisões.</p>
       </footer>
+
+      <ScrollToTopButton />
     </main>
   );
 }
