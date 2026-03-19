@@ -1,13 +1,19 @@
 export const maskDecimal = (value: string) => {
   if (!value) return "";
-  let v = value.replace(".", ",");
-  v = v.replace(/[^0-9,]/g, ""); 
-  
-  const parts = v.split(",");
-  if (parts.length > 1) {
-    v = `${parts[0]},${parts[1].slice(0, 2)}`;
-  }
-  return v;
+
+  const digits = value.replace(/\D/g, "");
+  if (!digits) return ""; 
+
+  const cents = parseInt(digits, 10);
+  if (isNaN(cents)) return "";
+
+  const amount = (cents / 100).toFixed(2);
+
+  const [integerPart, decimalPart] = amount.split(".");
+
+  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+  return `${formattedInteger},${decimalPart}`;
 };
 
 export const maskDate = (value: string) => {
@@ -25,5 +31,7 @@ export const maskDate = (value: string) => {
 
 export const parseStringToNumber = (value: string): number => {
   if (!value) return 0;
-  return Number(value.replace(",", "."));
+
+  const cleanValue = value.replace(/\./g, "").replace(",", ".");
+  return Number(cleanValue);
 };

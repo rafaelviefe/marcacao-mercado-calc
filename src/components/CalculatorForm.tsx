@@ -7,7 +7,6 @@ import { z } from "zod";
 import { parse, isValid, startOfDay } from "date-fns";
 import { Info, ChevronDown } from "lucide-react";
 import { maskDate, maskDecimal, parseStringToNumber } from "@/utils/formatters";
-
 import { calcularMarcacaoAMercado } from "@/utils/math/core";
 import { simularNovoInvestimento } from "@/utils/math/scenarios";
 import { CalculoCompleto, CenarioSimulado } from "@/types/calculator";
@@ -79,7 +78,6 @@ export function CalculatorForm() {
   };
 
   const onSubmit = (data: CalculatorFormData) => {
-
     const inputParaMotor = {
       dataAplicacao: parse(data.dataAplicacao, "dd/MM/yyyy", new Date()),
       dataVencimento: parse(data.dataVencimento, "dd/MM/yyyy", new Date()),
@@ -127,6 +125,7 @@ export function CalculatorForm() {
               {...register("dataAplicacao")} 
               onChange={handleDateChange("dataAplicacao")}
               placeholder="dd/mm/aaaa" 
+              inputMode="numeric"
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-red"
             />
             {errors.dataAplicacao && <span className="text-xs text-calculator-red font-semibold">{errors.dataAplicacao.message}</span>}
@@ -138,6 +137,7 @@ export function CalculatorForm() {
               {...register("dataVencimento")} 
               onChange={handleDateChange("dataVencimento")}
               placeholder="dd/mm/aaaa" 
+              inputMode="numeric"
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-red"
             />
             {errors.dataVencimento && <span className="text-xs text-calculator-red font-semibold">{errors.dataVencimento.message}</span>}
@@ -150,7 +150,8 @@ export function CalculatorForm() {
             <input 
               {...register("valorInvestido")} 
               onChange={handleDecimalChange("valorInvestido")}
-              placeholder="Ex: 10000,00" 
+              placeholder="Ex: 10.000,00" 
+              inputMode="numeric"
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-red"
             />
             {errors.valorInvestido && <span className="text-xs text-calculator-red font-semibold">{errors.valorInvestido.message}</span>}
@@ -161,7 +162,8 @@ export function CalculatorForm() {
             <input 
               {...register("valorAtualBruto")} 
               onChange={handleDecimalChange("valorAtualBruto")}
-              placeholder="Ex: 11500,50" 
+              placeholder="Ex: 11.500,50" 
+              inputMode="numeric"
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-red"
             />
             {errors.valorAtualBruto && <span className="text-xs text-calculator-red font-semibold">{errors.valorAtualBruto.message}</span>}
@@ -174,7 +176,8 @@ export function CalculatorForm() {
             <input 
               {...register("rentabilidadeContratada")} 
               onChange={handleDecimalChange("rentabilidadeContratada")}
-              placeholder="Ex: 12,5" 
+              placeholder="Ex: 12,50" 
+              inputMode="numeric"
               className="flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-red"
             />
             {errors.rentabilidadeContratada && <span className="text-xs text-calculator-red font-semibold">{errors.rentabilidadeContratada.message}</span>}
@@ -207,6 +210,7 @@ export function CalculatorForm() {
                   {...register("taxaOfertada")} 
                   onChange={handleDecimalChange("taxaOfertada")}
                   placeholder="Rentabilidade da nova oferta (% a.a)" 
+                  inputMode="numeric"
                   className="flex h-10 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-red"
                 />
               </div>
@@ -255,7 +259,6 @@ export function CalculatorForm() {
               </h4>
               
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Cenário 1: Não fazer nada */}
                 <div className="flex flex-col space-y-1">
                   <span className="text-xs font-bold text-gray-400 uppercase">Se não fizer nada</span>
                   <span className="text-xl font-bold text-gray-600">{formatBRL(resultado.montanteFicar)}</span>
@@ -300,11 +303,11 @@ export function CalculatorForm() {
                       : `${resultado.core.intermediarios.aliquotaAtual}% sobre o lucro`
                 }</p>
               </div>
-              <div className="grid grid-cols-2 gap-4 border-b border-gray-100 pb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-gray-100 pb-3">
                 <p><strong>Lucro Bruto Atual:</strong> {formatBRL(resultado.core.intermediarios.lucroAtualBruto)}</p>
                 <p><strong>Imposto Retido se Sacar Hoje:</strong> {formatBRL(resultado.core.intermediarios.impostoRetidoAtual)}</p>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <p className="text-calculator-text font-bold"><strong>Capital para Reinvestir (Líquido Atual):</strong> {formatBRL(resultado.core.intermediarios.valorAtualLiquido)}</p>
                 <p className="text-calculator-text font-bold"><strong>Alvo a Bater (Líquido Original):</strong> {formatBRL(resultado.core.intermediarios.valorFinalLiquidoOriginal)}</p>
               </div>
