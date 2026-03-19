@@ -158,7 +158,7 @@ export function CalculatorForm() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-calculator-text">Valor Atual Bruto na Corretora (R$)</label>
+            <label className="text-sm font-medium text-calculator-text">Valor Atual Bruto (R$)</label>
             <input 
               {...register("valorAtualBruto")} 
               onChange={handleDecimalChange("valorAtualBruto")}
