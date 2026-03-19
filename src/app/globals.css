@@ -5,6 +5,7 @@
   --color-calculator-card: #f8f9fa;
   --color-calculator-text: rgb(33, 37, 41);
   --color-calculator-primary: rgb(4, 102, 76);
+  --color-calculator-secondary: rgb(2, 64, 48);;
 }
 
 body {

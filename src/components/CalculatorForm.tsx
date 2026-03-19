@@ -331,7 +331,7 @@ export function CalculatorForm() {
               </div>
               <button
                 type="submit"
-                className="bg-calculator-primary text-white hover:bg-red-800 transition-colors font-bold tracking-wide rounded-md h-10 px-8 w-full sm:w-auto shadow-md"
+                className="bg-calculator-primary text-white hover:bg-calculator-secondary transition-colors font-bold tracking-wide rounded-md h-10 px-8 w-full sm:w-auto shadow-md"
               >
                 Calcular
               </button>
@@ -415,7 +415,7 @@ export function CalculatorForm() {
                     {formatBRL(resultado.simulacaoIsenta.valorFinalLiquido)}
                   </span>
                   <span
-                    className={`text-sm font-bold ${resultado.simulacaoIsenta.ganhoReal > 0 ? "text-green-600" : "text-calculator-primary"}`}
+                    className={`text-sm font-bold ${resultado.simulacaoIsenta.ganhoReal > 0 ? "text-green-700" : "text-red-700"}`}
                   >
                     {resultado.simulacaoIsenta.ganhoReal > 0 ? "+" : ""}
                     {formatBRL(resultado.simulacaoIsenta.ganhoReal)}
@@ -430,7 +430,7 @@ export function CalculatorForm() {
                     {formatBRL(resultado.simulacaoTributada.valorFinalLiquido)}
                   </span>
                   <span
-                    className={`text-sm font-bold ${resultado.simulacaoTributada.ganhoReal > 0 ? "text-green-600" : "text-calculator-primary"}`}
+                    className={`text-sm font-bold ${resultado.simulacaoTributada.ganhoReal > 0 ? "text-green-700" : "text-red-700"}`}
                   >
                     {resultado.simulacaoTributada.ganhoReal > 0 ? "+" : ""}
                     {formatBRL(resultado.simulacaoTributada.ganhoReal)}
