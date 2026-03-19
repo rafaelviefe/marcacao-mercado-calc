@@ -15,9 +15,11 @@ export interface ValoresIntermediarios {
   anosTotais: number;
   anosFaltantes: number;
   lucroAtualBruto: number;
+  aliquotaAtual: number;
   impostoRetidoAtual: number;
   valorAtualLiquido: number;
   valorFinalBrutoOriginal: number;
+  aliquotaOriginal: number;
   impostoFinalOriginal: number;
   valorFinalLiquidoOriginal: number;
 }

@@ -290,9 +290,15 @@ export function CalculatorForm() {
             </summary>
             
             <div className="p-4 mt-2 bg-white border border-gray-200 rounded-md text-sm text-gray-600 space-y-3">
-              <div className="grid grid-cols-2 gap-4 border-b border-gray-100 pb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-b border-gray-100 pb-3">
                 <p><strong>Prazo Faltante:</strong> {(resultado.core.intermediarios.anosFaltantes).toFixed(2)} anos ({resultado.core.intermediarios.diasFaltantes} dias exatos)</p>
-                <p><strong>Alíquota IR no Resgate Hoje:</strong> {resultado.core.intermediarios.impostoRetidoAtual > 0 ? 'Aplicada sobre o lucro' : 'Isento ou Sem Lucro'}</p>
+                <p><strong>Alíquota IR no Resgate Hoje:</strong> {
+                  resultado.core.intermediarios.aliquotaAtual === 0 
+                    ? 'Isento' 
+                    : resultado.core.intermediarios.lucroAtualBruto <= 0 
+                      ? 'Sem lucro tributável'
+                      : `${resultado.core.intermediarios.aliquotaAtual}% sobre o lucro`
+                }</p>
               </div>
               <div className="grid grid-cols-2 gap-4 border-b border-gray-100 pb-3">
                 <p><strong>Lucro Bruto Atual:</strong> {formatBRL(resultado.core.intermediarios.lucroAtualBruto)}</p>

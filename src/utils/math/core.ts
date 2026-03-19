@@ -6,7 +6,6 @@ import { getAliquotaIR } from "./taxes";
 Decimal.set({ precision: 20, rounding: Decimal.ROUND_HALF_UP });
 
 export function calcularMarcacaoAMercado(input: CalculadoraInput): CalculoCompleto {
-
   const vInvestido = new Decimal(input.valorInvestido);
   const vAtualBruto = new Decimal(input.valorAtualBruto);
   const rContratada = new Decimal(input.rentabilidadeContratada).div(100);
@@ -51,9 +50,11 @@ export function calcularMarcacaoAMercado(input: CalculadoraInput): CalculoComple
       anosTotais: prazos.anosTotais,
       anosFaltantes: prazos.anosFaltantes,
       lucroAtualBruto: lucroAtualBruto.toNumber(),
+      aliquotaAtual: aliquotaAtual * 100,
       impostoRetidoAtual: impostoAtual.toNumber(),
       valorAtualLiquido: vAtualLiquido.toNumber(),
       valorFinalBrutoOriginal: vFinalBrutoOrig.toNumber(),
+      aliquotaOriginal: aliquotaOrig * 100,
       impostoFinalOriginal: impostoOrig.toNumber(),
       valorFinalLiquidoOriginal: vFinalLiqOrig.toNumber(),
     },
