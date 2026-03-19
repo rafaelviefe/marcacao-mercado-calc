@@ -331,7 +331,7 @@ export function CalculatorForm() {
               </div>
               <button
                 type="submit"
-                className="bg-calculator-primary text-white hover:bg-calculator-secondary transition-colors font-bold tracking-wide rounded-md h-10 px-8 w-full sm:w-auto shadow-md"
+                className="cursor-pointer bg-calculator-primary text-white hover:bg-calculator-secondary transition-colors font-bold tracking-wide rounded-md h-10 px-8 w-full sm:w-auto shadow-md"
               >
                 Calcular
               </button>
