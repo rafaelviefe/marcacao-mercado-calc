@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://marcacao-mercado-calc.vercel.app/sitemap.xml',
+    sitemap: 'https://calculadora.rafaelviefe.app/sitemap.xml',
   }
 }

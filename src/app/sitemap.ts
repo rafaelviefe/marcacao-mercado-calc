@@ -3,7 +3,7 @@ import { MetadataRoute } from 'next'
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://marcacao-mercado-calc.vercel.app',
+      url: 'https://calculadora.rafaelviefe.app',
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 1,

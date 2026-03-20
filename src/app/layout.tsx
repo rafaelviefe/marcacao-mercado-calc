@@ -8,7 +8,7 @@ const notoSans = Noto_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://marcacao-mercado-calc.vercel.app'),
+  metadataBase: new URL('https://calculadora.rafaelviefe.app'),
   title: "Calculadora de Marcação a Mercado | Compare sua Renda Fixa",
   description: "Descubra a rentabilidade mínima exigida para fazer a marcação a mercado do seu Tesouro Direto, CDB, LCI, LCA ou Debênture. Simule ganhos e impostos.",
   keywords: "marcação a mercado, calculadora renda fixa, tesouro direto, resgate antecipado, CDB, LCI, LCA, imposto de renda, TIR implícita",
