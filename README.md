@@ -1,36 +1,61 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Calculadora de Marcação a Mercado
 
-## Getting Started
+Ferramenta open-source para simulação e cálculo do impacto da marcação a mercado na liquidação antecipada de títulos de Renda Fixa no Brasil.
 
-First, run the development server:
+## Quick Start (Execução Local)
+
+O projeto foi estruturado para rápida inicialização. Certifique-se de ter o Node.js (versão 18+) instalado.
 
 ```bash
+# Clone o repositório
+git clone [https://github.com/SEU_USUARIO/marcacao-mercado-calc.git](https://github.com/SEU_USUARIO/marcacao-mercado-calc.git)
+
+# Acesse o diretório
+cd marcacao-mercado-calc
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
+A aplicação estará disponível em http://localhost:3000.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Sobre o Projeto
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Este repositório visa preencher uma lacuna técnica no ecossistema financeiro brasileiro: a ausência de calculadoras de renda fixa transparentes, de código aberto e matematicamente rigorosas que permitam ao investidor auditar e compreender o custo de oportunidade na venda de títulos.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+A modelagem matemática e as premissas de educação financeira implementadas nesta aplicação utilizam como principal referência técnica os conceitos amplamente divulgados pelo canal **Investidor Sardinha**.
 
-## Learn More
+Nosso foco é fornecer uma infraestrutura de cálculo auditável pela comunidade, garantindo precisão na precificação e transparência total sobre como as taxas e impostos impactam o Preço Unitário (PU).
 
-To learn more about Next.js, take a look at the following resources:
+## Escopo Técnico e Funcionalidades
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+A aplicação resolve a fórmula de juros compostos aplicada às especificidades do mercado brasileiro:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Motor de Precificação (PU)**: Cálculo do valor presente e futuro baseado na convenção de mercado de 252 dias úteis.
+- **Tributação Automática**: Integração com as regras da Receita Federal (tabela regressiva de IR e abatimento dinâmico de IOF para prazos inferiores a 30 dias).
+- **Comparativo Analítico**: Avaliação quantitativa de rentabilidade do cenário "Carregar até o Vencimento" versus "Venda a Mercado".
+- **Privacy by Design (Client-Side Only)**: Toda a arquitetura foi desenhada para executar exclusivamente no navegador do usuário. Nenhum dado financeiro transita em rede ou é armazenado em banco de dados.
 
-## Deploy on Vercel
+## Arquitetura do Domínio Financeiro
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Para viabilizar a evolução contínua (ex: suporte futuro a títulos indexados à inflação), a lógica matemática foi estritamente isolada da interface (React). O core financeiro encontra-se em `src/utils/math/`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `core.ts`: Fórmulas puras de juros compostos e precificação unitária (PU).
+- `dates.ts`: Lógica de padronização de contagem de dias úteis e dias corridos.
+- `taxes.ts`: Constantes e funções para inferência de alíquotas de IR e IOF.
+- `scenarios.ts`: Agregação e orquestração dos dados para geração do relatório comparativo.
+
+Como Contribuir
+
+A manutenção e evolução deste projeto dependem da comunidade. Seja para otimizar o motor de cálculo, refatorar componentes ou adicionar cobertura de testes, sua contribuição é essencial.
+
+1. Faça o fork do repositório.
+2. Crie uma branch para sua modificação: `git checkout -b feature/sua-feature-aqui`
+3. Faça o commit detalhando suas alterações de forma clara.
+4. Abra um Pull Request.
+
+## Aviso Legal
+
+Este software é disponibilizado com fins estritamente educacionais e analíticos. Os algoritmos utilizam a padronização primária de mercado (spread zero, ano base de 252 dias úteis). Os valores reais liquidados por instituições financeiras podem apresentar divergências em decorrência de deságios (spreads) proprietários e tratamentos específicos de calendário de feriados. Esta ferramenta não constitui recomendação de investimento ou consultoria financeira.
