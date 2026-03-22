@@ -59,3 +59,7 @@ A manutenção e evolução deste projeto dependem da comunidade. Seja para otim
 ## Aviso Legal
 
 Este software é disponibilizado com fins estritamente educacionais e analíticos. Os algoritmos utilizam a padronização primária de mercado (spread zero, ano base de 252 dias úteis). Os valores reais liquidados por instituições financeiras podem apresentar divergências em decorrência de deságios (spreads) proprietários e tratamentos específicos de calendário de feriados. Esta ferramenta não constitui recomendação de investimento ou consultoria financeira.
+
+## Licença
+
+Distribuído sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais informações.
