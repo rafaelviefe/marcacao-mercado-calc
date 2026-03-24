@@ -12,7 +12,7 @@ O projeto foi estruturado para rápida inicialização. Certifique-se de ter o N
 
 ```bash
 # Clone o repositório
-git clone [https://github.com/rafaelviefe/marcacao-mercado-calc.git](https://github.com/rafaelviefe/marcacao-mercado-calc.git)
+git clone https://github.com/rafaelviefe/marcacao-mercado-calc.git
 
 # Acesse o diretório
 cd marcacao-mercado-calc
