@@ -244,11 +244,11 @@ export function CalculatorForm() {
   return (
     <div className="max-w-4xl p-6 border border-gray-200 rounded-md bg-calculator-card w-full mx-auto shadow-sm transition-all duration-500">
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
-        <div>
+        <div className="flex-1">
           <h3 className="text-2xl font-semibold tracking-tight text-calculator-text">
             Dados do seu Título
           </h3>
-          <p className="text-sm text-gray-500 mt-1">
+          <p className="text-sm text-gray-500 mt-1 sm:max-w-[85%]">
             Preencha as informações atuais do seu investimento para descobrirmos a
             rentabilidade mínima exigida.
           </p>
