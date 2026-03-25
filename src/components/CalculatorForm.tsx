@@ -10,9 +10,12 @@ import { maskDate, maskDecimal, parseStringToNumber } from "@/utils/formatters";
 import { calcularMarcacaoAMercado } from "@/utils/math/core";
 import { simularNovoInvestimento } from "@/utils/math/scenarios";
 import { CalculoCompleto, CenarioSimulado } from "@/types/calculator";
+import { comporTaxaNominal, extrairTaxaReal } from "@/utils/math/rates";
 
 const formSchema = z
   .object({
+    tipoTitulo: z.enum(["PREFIXADO", "IPCA"]),
+    taxaInflacao: z.string().optional(),
     dataAplicacao: z
       .string()
       .min(10, "Data incompleta")
@@ -77,6 +80,8 @@ type ResultState = {
   simulacaoIsenta?: CenarioSimulado;
   simulacaoTributada?: CenarioSimulado;
   montanteFicar: number;
+  isIPCA: boolean;
+  ipcaUtilizado: number;
 };
 
 const formatBRL = (val: number) =>
@@ -97,14 +102,19 @@ export function CalculatorForm() {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<CalculatorFormData>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
     defaultValues: {
+      tipoTitulo: "PREFIXADO",
+      taxaInflacao: "4,50",
       isentoIR: false,
       taxaOfertada: "",
     },
   });
+
+  const tipoTituloWatch = watch("tipoTitulo");
 
   const handleDateChange =
     (field: "dataAplicacao" | "dataVencimento") =>
@@ -118,22 +128,34 @@ export function CalculatorForm() {
         | "valorInvestido"
         | "valorAtualBruto"
         | "rentabilidadeContratada"
-        | "taxaOfertada",
+        | "taxaOfertada"
+        | "taxaInflacao",
     ) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setValue(field, maskDecimal(e.target.value), { shouldValidate: true });
     };
 
   const onSubmit = (data: CalculatorFormData) => {
+    const isIPCA = data.tipoTitulo === "IPCA";
+    const ipcaUtilizado = isIPCA
+      ? parseStringToNumber(data.taxaInflacao || "4,50")
+      : 0;
+
+    const taxaDigitadaContratada = parseStringToNumber(
+      data.rentabilidadeContratada,
+    );
+    const taxaNominalParaMotor = comporTaxaNominal(
+      taxaDigitadaContratada,
+      ipcaUtilizado,
+    );
+
     const inputParaMotor = {
       dataAplicacao: parse(data.dataAplicacao, "dd/MM/yyyy", new Date()),
       dataVencimento: parse(data.dataVencimento, "dd/MM/yyyy", new Date()),
       dataAnalise: startOfDay(new Date()),
       valorInvestido: parseStringToNumber(data.valorInvestido),
       valorAtualBruto: parseStringToNumber(data.valorAtualBruto),
-      rentabilidadeContratada: parseStringToNumber(
-        data.rentabilidadeContratada,
-      ),
+      rentabilidadeContratada: taxaNominalParaMotor,
       isentoIR: data.isentoIR,
     };
 
@@ -141,14 +163,19 @@ export function CalculatorForm() {
 
     let simIsenta, simTributada;
     if (data.taxaOfertada && parseStringToNumber(data.taxaOfertada) > 0) {
-      const taxaUsuario = parseStringToNumber(data.taxaOfertada);
+      const taxaDigitadaOferta = parseStringToNumber(data.taxaOfertada);
+      const taxaNominalOferta = comporTaxaNominal(
+        taxaDigitadaOferta,
+        ipcaUtilizado,
+      );
+
       const valLiqAtual = calcCompleto.intermediarios.valorAtualLiquido;
       const anosFaltantes = calcCompleto.intermediarios.anosFaltantes;
       const diasFaltantes = calcCompleto.intermediarios.diasFaltantes;
       const valLiqOrig = calcCompleto.intermediarios.valorFinalLiquidoOriginal;
 
       simIsenta = simularNovoInvestimento(
-        taxaUsuario,
+        taxaNominalOferta,
         true,
         valLiqAtual,
         anosFaltantes,
@@ -156,7 +183,7 @@ export function CalculatorForm() {
         valLiqOrig,
       );
       simTributada = simularNovoInvestimento(
-        taxaUsuario,
+        taxaNominalOferta,
         false,
         valLiqAtual,
         anosFaltantes,
@@ -170,22 +197,91 @@ export function CalculatorForm() {
       simulacaoIsenta: simIsenta,
       simulacaoTributada: simTributada,
       montanteFicar: calcCompleto.intermediarios.valorFinalLiquidoOriginal,
+      isIPCA,
+      ipcaUtilizado,
     });
+  };
+
+  const formatInlineRate = (taxaNominalGerada: number) => {
+    if (!resultado) return "";
+    if (resultado.isIPCA) {
+      const taxaReal = extrairTaxaReal(
+        taxaNominalGerada,
+        resultado.ipcaUtilizado,
+      );
+      return formatPct(taxaReal);
+    }
+    return formatPct(taxaNominalGerada);
+  };
+
+  const renderCardRate = (taxaNominalGerada: number) => {
+    if (!resultado) return null;
+    if (resultado.isIPCA) {
+      const taxaReal = extrairTaxaReal(
+        taxaNominalGerada,
+        resultado.ipcaUtilizado,
+      );
+      return (
+        <>
+          <span className="text-xl font-bold text-gray-400 tracking-normal mr-1.5">
+            IPCA +
+          </span>
+          <span>{formatPct(taxaReal)}</span>
+        </>
+      );
+    }
+    return (
+      <>
+        <span>{formatPct(taxaNominalGerada)}</span>{" "}
+        <span className="text-lg font-semibold text-gray-400 tracking-normal">
+          a.a.
+        </span>
+      </>
+    );
   };
 
   return (
     <div className="max-w-4xl p-6 border border-gray-200 rounded-md bg-calculator-card w-full mx-auto shadow-sm transition-all duration-500">
-      <div className="mb-6">
-        <h3 className="text-2xl font-semibold tracking-tight text-calculator-text">
-          Dados do seu Título
-        </h3>
-        <p className="text-sm text-gray-500 mt-1">
-          Preencha as informações atuais do seu investimento para descobrirmos a
-          rentabilidade mínima exigida.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-6">
+        <div>
+          <h3 className="text-2xl font-semibold tracking-tight text-calculator-text">
+            Dados do seu Título
+          </h3>
+          <p className="text-sm text-gray-500 mt-1">
+            Preencha as informações atuais do seu investimento para descobrirmos a
+            rentabilidade mínima exigida.
+          </p>
+        </div>
+        
+        <div className="flex items-center bg-gray-100 p-1 rounded-md shrink-0 border border-gray-200">
+          <button
+            type="button"
+            onClick={() => setValue("tipoTitulo", "PREFIXADO")}
+            className={`px-3 py-1.5 text-sm font-medium rounded transition-all duration-200 ${
+              tipoTituloWatch === "PREFIXADO"
+                ? "bg-white text-calculator-text shadow-sm"
+                : "text-gray-500 hover:text-calculator-text"
+            }`}
+          >
+            Prefixado
+          </button>
+          <button
+            type="button"
+            onClick={() => setValue("tipoTitulo", "IPCA")}
+            className={`px-3 py-1.5 text-sm font-medium rounded transition-all duration-200 ${
+              tipoTituloWatch === "IPCA"
+                ? "bg-white text-calculator-text shadow-sm"
+                : "text-gray-500 hover:text-calculator-text"
+            }`}
+          >
+            IPCA +
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <input type="hidden" {...register("tipoTitulo")} />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-calculator-text">
@@ -264,9 +360,29 @@ export function CalculatorForm() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-calculator-text">
-              Rentabilidade Contratada (% a.a)
-            </label>
+            <div className="flex justify-between items-center h-7">
+              <label className="text-sm font-medium text-calculator-text">
+                {tipoTituloWatch === "IPCA"
+                  ? "Taxa Fixa do IPCA+ (%)"
+                  : "Rentabilidade Contratada (% a.a)"}
+              </label>
+              <div
+                className={`flex items-center space-x-1 text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded border border-gray-200 transition-opacity duration-300 ${
+                  tipoTituloWatch === "IPCA"
+                    ? "opacity-100"
+                    : "opacity-0 pointer-events-none select-none"
+                }`}
+              >
+                <span>IPCA Base:</span>
+                <input
+                  {...register("taxaInflacao")}
+                  onChange={handleDecimalChange("taxaInflacao")}
+                  className="w-10 bg-transparent text-center font-semibold text-calculator-text focus:outline-none"
+                  tabIndex={tipoTituloWatch === "IPCA" ? 0 : -1}
+                />
+                <span>%</span>
+              </div>
+            </div>
             <input
               {...register("rentabilidadeContratada")}
               onChange={handleDecimalChange("rentabilidadeContratada")}
@@ -309,11 +425,15 @@ export function CalculatorForm() {
               diferença na prática.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <div className="flex-1 w-full">
+              <div className="flex-1 w-full relative">
                 <input
                   {...register("taxaOfertada")}
                   onChange={handleDecimalChange("taxaOfertada")}
-                  placeholder="Rentabilidade da nova oferta (% a.a)"
+                  placeholder={
+                    tipoTituloWatch === "IPCA"
+                      ? "Nova taxa IPCA+ (%)"
+                      : "Rentabilidade da nova oferta (% a.a)"
+                  }
                   inputMode="numeric"
                   className="flex h-10 w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-calculator-primary"
                 />
@@ -356,22 +476,16 @@ export function CalculatorForm() {
               <span className="text-sm text-gray-500 font-medium mb-1">
                 Para títulos ISENTOS (Ex: LCI, LCA)
               </span>
-              <span className="text-3xl font-black text-calculator-text">
-                {formatPct(resultado.core.rentabilidadeMinima.taxaIsenta)}{" "}
-                <span className="text-lg font-semibold text-gray-400">
-                  a.a.
-                </span>
+              <span className="text-3xl font-black text-calculator-text flex items-baseline">
+                {renderCardRate(resultado.core.rentabilidadeMinima.taxaIsenta)}
               </span>
             </div>
             <div className="bg-white p-5 rounded-lg border border-gray-200 shadow-sm flex flex-col justify-center items-center text-center">
               <span className="text-sm text-gray-500 font-medium mb-1">
                 Para títulos TRIBUTADOS (Ex: CDB, Tesouro)
               </span>
-              <span className="text-3xl font-black text-calculator-text">
-                {formatPct(resultado.core.rentabilidadeMinima.taxaTributada)}{" "}
-                <span className="text-lg font-semibold text-gray-400">
-                  a.a.
-                </span>
+              <span className="text-3xl font-black text-calculator-text flex items-baseline">
+                {renderCardRate(resultado.core.rentabilidadeMinima.taxaTributada)}
               </span>
             </div>
           </div>
@@ -380,7 +494,7 @@ export function CalculatorForm() {
             <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-8">
               <h4 className="text-lg font-bold text-calculator-text mb-4 border-b border-gray-100 pb-2">
                 Projeção para a sua oferta de{" "}
-                {formatPct(resultado.simulacaoIsenta.taxaOfertada)}
+                {formatInlineRate(resultado.simulacaoIsenta.taxaOfertada)}
               </h4>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -404,7 +518,11 @@ export function CalculatorForm() {
                     {formatBRL(resultado.simulacaoIsenta.valorFinalLiquido)}
                   </span>
                   <span
-                    className={`text-sm font-bold ${resultado.simulacaoIsenta.ganhoReal > 0 ? "text-green-700" : "text-red-700"}`}
+                    className={`text-sm font-bold ${
+                      resultado.simulacaoIsenta.ganhoReal > 0
+                        ? "text-green-700"
+                        : "text-red-700"
+                    }`}
                   >
                     {resultado.simulacaoIsenta.ganhoReal > 0 ? "+" : ""}
                     {formatBRL(resultado.simulacaoIsenta.ganhoReal)}
@@ -419,7 +537,11 @@ export function CalculatorForm() {
                     {formatBRL(resultado.simulacaoTributada.valorFinalLiquido)}
                   </span>
                   <span
-                    className={`text-sm font-bold ${resultado.simulacaoTributada.ganhoReal > 0 ? "text-green-700" : "text-red-700"}`}
+                    className={`text-sm font-bold ${
+                      resultado.simulacaoTributada.ganhoReal > 0
+                        ? "text-green-700"
+                        : "text-red-700"
+                    }`}
                   >
                     {resultado.simulacaoTributada.ganhoReal > 0 ? "+" : ""}
                     {formatBRL(resultado.simulacaoTributada.ganhoReal)}
