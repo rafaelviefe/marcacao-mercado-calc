@@ -115,6 +115,7 @@ export function CalculatorForm() {
   });
 
   const tipoTituloWatch = watch("tipoTitulo");
+  const isentoIRWatch = watch("isentoIR");
 
   const handleDateChange =
     (field: "dataAplicacao" | "dataVencimento") =>
@@ -358,7 +359,7 @@ export function CalculatorForm() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <div className="flex justify-between items-center h-7">
               <label className="text-sm font-medium text-calculator-text">
@@ -397,19 +398,37 @@ export function CalculatorForm() {
             )}
           </div>
 
-          <div className="flex items-center space-x-2 h-10 px-1">
-            <input
-              type="checkbox"
-              id="isentoIR"
-              {...register("isentoIR")}
-              className="w-4 h-4 accent-calculator-primary cursor-pointer"
-            />
-            <label
-              htmlFor="isentoIR"
-              className="text-sm font-medium text-calculator-text cursor-pointer select-none"
-            >
-              O título atual é isento de Imposto de Renda?
-            </label>
+          <div className="space-y-2">
+            <div className="flex items-center h-7">
+              <label className="text-sm font-medium text-calculator-text">
+                O título atual é isento de Imposto de Renda?
+              </label>
+            </div>
+            <div className="flex items-center bg-gray-100 p-1 rounded-md border border-gray-200 h-10 w-full">
+              <input type="checkbox" className="hidden" {...register("isentoIR")} />
+              <button
+                type="button"
+                onClick={() => setValue("isentoIR", false, { shouldValidate: true })}
+                className={`flex-1 py-1.5 h-full text-sm font-medium rounded transition-all duration-200 ${
+                  !isentoIRWatch
+                    ? "bg-white text-calculator-text shadow-sm"
+                    : "text-gray-500 hover:text-calculator-text"
+                }`}
+              >
+                Não
+              </button>
+              <button
+                type="button"
+                onClick={() => setValue("isentoIR", true, { shouldValidate: true })}
+                className={`flex-1 py-1.5 h-full text-sm font-medium rounded transition-all duration-200 ${
+                  isentoIRWatch
+                    ? "bg-white text-calculator-text shadow-sm"
+                    : "text-gray-500 hover:text-calculator-text"
+                }`}
+              >
+                Sim
+              </button>
+            </div>
           </div>
         </div>
 
