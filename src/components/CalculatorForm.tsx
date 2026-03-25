@@ -68,17 +68,6 @@ const formSchema = z
         });
       }
     }
-
-    if (
-      parseStringToNumber(data.valorAtualBruto) <
-      parseStringToNumber(data.valorInvestido)
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Valor atual menor que investido",
-        path: ["valorAtualBruto"],
-      });
-    }
   });
 
 export type CalculatorFormData = z.infer<typeof formSchema>;
