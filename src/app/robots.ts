@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://calculadora.rafaelviefe.app/sitemap.xml',
+    sitemap: 'https://rafaelviefe.app/sitemap.xml',
   }
 }
